@@ -2,8 +2,6 @@
 !theme metal
 skinparam BackgroundColor #FFFFFF-#DEDEDE
 
-skinparam boundary box color green
-
 skinparam arrow {
 	Thickness 2
 	Color #8B8B8B
@@ -21,17 +19,17 @@ skinparam actor {
 
 skinparam collections {
     BorderColor #8B8B8B
-	BackgroundColor #316DC1
-    TitleFontColor black
+    BackGroundColor #82C299
+    TitleFontColor white
     FontSize  14
+    text red
 }
 
 skinparam boundary {
     BorderColor #8B8B8B
 	BackgroundColor #316DC1
     FontColor black
-    FontSize  14
-    
+    FontSize  14    
 }
 
 skinparam sequence {
@@ -44,11 +42,17 @@ boundary ControlPlane
 boundary DataPlane
 boundary EnvironmentPlane
 collections DTE
+boundary PhysicalEnvironment
+
 activate ControlPlane
 activate DataPlane
 activate EnvironmentPlane
 activate User
+activate PhysicalEnvironment
 
+User->ControlPlane : List DTE types
+ControlPlane-> DataPlane : Retrieve Info based on search criteria
+return DTE List
 User->ControlPlane : Create DTE
 ControlPlane->DataPlane : Get DTE Definition
 return DTE definition
@@ -57,11 +61,13 @@ EnvironmentPlane-->DTE : Provision
 activate DTE
 DTE->DTE : Deploy Components
 DTE->DTE : Component Discovery
+DTE<<-->>PhysicalEnvironment : Initialise
 DTE->DTE : Wait for ready
 DTE->DTE : Ready
 DTE-->ControlPlane : Status
 ControlPlane->User : DTE Ready
-User <-> DTE : Direct Interaction
+User <--> DTE : Direct Interaction
+DTE <<-->>  PhysicalEnvironment : Direct Interaction
 User -> ControlPlane : Command
 ControlPlane->DTE : Command
 DTE-->ControlPlane : Status
