@@ -1,0 +1,75 @@
+@startuml
+!theme metal
+skinparam BackgroundColor #FFFFFF-#DEDEDE
+
+skinparam boundary box color green
+
+skinparam arrow {
+	Thickness 2
+	Color #8B8B8B
+	FontColor black
+    FontSize  14
+}
+skinparam defaultFontName       "Sans"
+skinparam defaultFontSize  12
+skinparam actor {
+    BorderColor #8B8B8B
+	BackgroundColor #316DC1
+    FontColor black
+    FontSize  14
+}
+
+skinparam collections {
+    BorderColor #8B8B8B
+	BackgroundColor #316DC1
+    TitleFontColor black
+    FontSize  14
+}
+
+skinparam boundary {
+    BorderColor #8B8B8B
+	BackgroundColor #316DC1
+    FontColor black
+    FontSize  14
+    
+}
+
+skinparam sequence {
+    LifeLineBackgroundColor #EE0000-#BE0000
+}
+
+hide footbox
+actor User 
+boundary ControlPlane
+boundary DataPlane
+boundary EnvironmentPlane
+collections DTE
+activate ControlPlane
+activate DataPlane
+activate EnvironmentPlane
+activate User
+
+User->ControlPlane : Create DTE
+ControlPlane->DataPlane : Get DTE Definition
+return DTE definition
+ControlPlane->EnvironmentPlane : Create DTE
+EnvironmentPlane-->DTE : Provision
+activate DTE
+DTE->DTE : Deploy Components
+DTE->DTE : Component Discovery
+DTE->DTE : Wait for ready
+DTE->DTE : Ready
+DTE-->ControlPlane : Status
+ControlPlane->User : DTE Ready
+User <-> DTE : Direct Interaction
+User -> ControlPlane : Command
+ControlPlane->DTE : Command
+DTE-->ControlPlane : Status
+User->ControlPlane : Shutdown DTE
+deactivate User
+ControlPlane->EnvironmentPlane : Terminate DTE
+EnvironmentPlane->DTE : Terminate
+destroy DTE
+ControlPlane->>DataPlane : Process Output/Results
+
+@enduml
